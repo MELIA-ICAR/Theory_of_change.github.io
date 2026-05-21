@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Theory of Change Builder — ICAR Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+  :root {
+    --paper: #f4efe6;
+    --paper-2: #ebe4d6;
+    --ink: #1a1a1a;
+    --ink-soft: #3a3a3a;
+    --accent: #c8542b;
+    --accent-2: #4a6b3a;
+    --accent-3: #d4a017;
+    --line: #2a2a2a;
+    --line-soft: #c9c0ad;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200,84,43,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(74,107,58,0.05) 0%, transparent 45%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/></svg>");
+    z-index: 0;
+  }
+  .layout {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+  header.masthead {
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 16px;
+  }
+  .mast-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .mast-meta.right { text-align: right; }
+  .mast-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: clamp(32px, 5vw, 54px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: var(--ink);
+  }
+  .mast-title span { font-style: normal; font-weight: 300; color: var(--accent); }
+  .mast-sub {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    grid-column: 1 / -1;
+  }
+  .user-badge {
+    margin-top: 8px;
+    text-align: center;
+    grid-column: 1 / -1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+  .user-badge strong { color: var(--accent); font-weight: 600; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+    .stepper { position: static !important; max-height: none !important; }
+  }
+  .stepper {
+    position: sticky;
+    top: 16px;
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    padding: 18px 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  .stepper h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 8px;
+  }
+  .step-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 6px;
+    cursor: pointer;
+    border-radius: 2px;
+    margin-bottom: 2px;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .step-item:hover { background: rgba(0,0,0,0.04); }
+  .step-item.active { background: var(--ink); color: var(--paper); }
+  .step-item.active .step-num { color: var(--accent-3); }
+  .step-item.done .step-num::after {
+    content: '✓';
+    position: absolute;
+    margin-left: 4px;
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+  .step-item.active.done .step-num::after { color: var(--accent-3); }
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 22px;
+    color: var(--accent);
+  }
+  .step-label { font-size: 13px; line-height: 1.3; }
+  .stepper-actions {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-panel {
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    min-height: 70vh;
+  }
+  .chat-header {
+    padding: 14px 20px;
+    border-bottom: 1.5px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .chat-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; }
+  .chat-step-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--accent);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .msg { display: flex; gap: 12px; animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    font-style: italic;
+  }
+  .msg.user .msg-avatar { background: var(--accent); }
+  .msg-body {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    padding: 12px 16px;
+    border-radius: 2px;
+    font-size: 14px;
+  }
+  .msg.user .msg-body { background: #fff; border-color: var(--accent); }
+  .msg-body p { margin-bottom: 8px; }
+  .msg-body p:last-child { margin-bottom: 0; }
+  .msg-body .hint {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(212,160,23,0.12);
+    border-left: 3px solid var(--accent-3);
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-family: 'Fraunces', serif;
+  }
+  .msg-body .example {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .msg-body .example::before { content: 'e.g. '; color: var(--accent); font-weight: 600; }
+
+  .chat-input {
+    border-top: 1.5px solid var(--line);
+    padding: 16px 20px;
+    background: var(--paper-2);
+  }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; }
+  textarea.user-input {
+    flex: 1;
+    min-height: 60px;
+    max-height: 200px;
+    padding: 10px 14px;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    color: var(--ink);
+    outline: none;
+  }
+  textarea.user-input:focus { border-color: var(--accent); }
+
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border: 1.5px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 0;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn.small { padding: 6px 10px; font-size: 10px; }
+  .btn.accent { background: var(--accent); border-color: var(--accent); }
+  .btn.accent:hover { background: var(--accent-2); border-color: var(--accent-2); }
+  .btn.green { background: var(--accent-2); border-color: var(--accent-2); color: var(--paper); }
+  .btn.green:hover { background: var(--ink); border-color: var(--ink); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .summary-panel {
+    background: var(--paper-2);
+    border: 1.5px solid var(--line);
+    padding: 24px;
+    margin-top: 24px;
+    display: none;
+  }
+  .summary-panel.visible { display: block; animation: fadeUp 0.5s ease both; }
+  .summary-header {
+    border-bottom: 1.5px solid var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .summary-header h2 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 28px;
+  }
+  .summary-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--line-soft);
+  }
+  .summary-section:last-child { border-bottom: none; }
+  .summary-section h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .summary-section .content {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+  .pathway-wrap {
+    margin-top: 24px;
+    overflow-x: auto;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    padding: 24px;
+  }
+  .pathway-wrap h3 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .pathway-svg { width: 100%; min-width: 700px; height: auto; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 1000;
+    border-left: 4px solid var(--accent-3);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* MODALS */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,26,0.72);
+    z-index: 500;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.visible { display: flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    max-width: 580px;
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 36px 36px 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .modal h2 {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .modal h2 .alt { font-style: normal; font-weight: 300; color: var(--accent); }
+  .modal-intro {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+  .modal hr.divider {
+    border: none;
+    border-top: 1.5px solid var(--ink);
+    margin: 18px 0;
+  }
+  .modal-field { margin-bottom: 16px; }
+  .modal-field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .modal-field label .req { color: var(--accent); }
+  .modal-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+  }
+  .modal-field input:focus { border-color: var(--accent); }
+  .modal-field .help {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+  .consent-box {
+    background: var(--paper-2);
+    border-left: 4px solid var(--accent-2);
+    padding: 14px 16px;
+    margin: 16px 0 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .consent-box strong {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .consent-box ul {
+    margin: 6px 0 0 18px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  .consent-box ul li { margin-bottom: 4px; }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .modal-error {
+    color: var(--accent);
+    font-size: 12px;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 16px;
+  }
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    background: var(--accent-2);
+    color: var(--paper);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .success-modal { text-align: center; }
+  .success-modal h2 { text-align: center; }
+  .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .privacy-note {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: rgba(74,107,58,0.08);
+    border-left: 3px solid var(--accent-2);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+  .privacy-note strong {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--accent-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  footer {
+    margin-top: 32px;
+    padding-top: 18px;
+    border-top: 1.5px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--paper-2); }
+  ::-webkit-scrollbar-thumb { background: var(--line-soft); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<!-- WELCOME MODAL -->
+<div class="modal-overlay visible" id="welcome-modal">
+  <div class="modal">
+    <div class="modal-tag">ICAR · MELIA Framework Builder</div>
+    <h2>Welcome to the<br><span class="alt">Theory of Change</span> Builder</h2>
+    <p class="modal-intro">Before we begin, please tell us who you are. This personalises your downloaded PowerPoint and helps the MELIA team understand how the tool is being used.</p>
+    <hr class="divider">
+
+    <div class="modal-field">
+      <label for="in-user">Your name <span class="req">*</span></label>
+      <input type="text" id="in-user" autocomplete="name" placeholder="e.g., Dr. A. Sharma" />
+      <div class="help">This will appear on your downloaded PowerPoint.</div>
+    </div>
+
+    <div class="modal-field">
+      <label for="in-inst">Institute / Organisation <span class="req">*</span></label>
+      <input type="text" id="in-inst" autocomplete="organization" placeholder="e.g., ICAR-IARI, New Delhi" />
+      <div class="help">Your ICAR institute, KVK, university, or partner organisation.</div>
+    </div>
+
+    <div class="modal-field">
+      <label for="in-email">Email <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></label>
+      <input type="email" id="in-email" autocomplete="email" placeholder="you@institute.gov.in" />
+      <div class="help">Only used if you later choose to submit your ToC to the MELIA registry.</div>
+    </div>
+
+    <div class="modal-field">
+      <label for="in-project">Project / Programme name <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></label>
+      <input type="text" id="in-project" placeholder="e.g., Drought-tolerant pearl millet for semi-arid zones" />
+    </div>
+
+    <div class="consent-box">
+      <strong>How your information is used</strong>
+      Your name and institute appear only on <em>your own</em> downloaded files. They are not shared automatically.
+      <ul>
+        <li>Your ToC answers are kept only in your browser by default.</li>
+        <li>At the end, you may <em>choose</em> to submit your final ToC to the MELIA registry — it is never sent automatically.</li>
+        <li>You can use the tool without submitting anything; the download still works.</li>
+      </ul>
+    </div>
+
+    <div class="modal-error" id="welcome-error"></div>
+    <div class="modal-actions">
+      <button class="btn accent" id="btn-start">Start →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submit-modal">
+  <div class="modal">
+    <div class="modal-tag">Submit to MELIA Registry</div>
+    <h2>Share your <span class="alt">Theory of Change</span></h2>
+    <p class="modal-intro">You're about to send your completed ToC to the MELIA team. This is voluntary — please review before submitting.</p>
+    <hr class="divider">
+
+    <div class="consent-box">
+      <strong>What will be sent</strong>
+      <ul>
+        <li>Your name, institute, email (if provided), and project name.</li>
+        <li>Your answers to all 8 ToC steps.</li>
+        <li>The date and time of submission.</li>
+      </ul>
+    </div>
+
+    <div class="consent-box" style="border-left-color: var(--accent);">
+      <strong style="color: var(--accent);">Your rights</strong>
+      <ul>
+        <li>Submission is voluntary; you can download the PPT without submitting.</li>
+        <li>The MELIA team will treat your data confidentially per ICAR norms and India's DPDP Act, 2023.</li>
+        <li>You may request access, correction, or deletion of your submission by contacting the MELIA team.</li>
+      </ul>
+    </div>
+
+    <div class="modal-field" style="margin-top: 8px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none; letter-spacing: 0; font-family: inherit; font-size: 13px; color: var(--ink); font-weight: 400;">
+        <input type="checkbox" id="consent-check" style="width:16px; height:16px; cursor:pointer; flex-shrink: 0;" />
+        <span>I consent to the MELIA team receiving and storing the information described above.</span>
+      </label>
+    </div>
+
+    <div class="modal-error" id="submit-error"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="btn-submit-cancel">Cancel</button>
+      <button class="btn green" id="btn-submit-confirm" disabled>
+        <span id="submit-btn-text">Submit Now</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal success-modal">
+    <div class="success-icon">✓</div>
+    <div class="modal-tag" style="text-align:center;">Submission Received</div>
+    <h2>Thank you<span class="alt">.</span></h2>
+    <p class="modal-intro">Your Theory of Change has been sent to the MELIA team. They may reach out if they have questions or feedback.</p>
+    <div class="consent-box" style="border-left-color: var(--accent-2);">
+      <strong>What happens next</strong>
+      <ul>
+        <li>You can still download your PPT, JSON, or print your summary.</li>
+        <li>Your work remains on this page until you close the browser tab.</li>
+        <li>For follow-up, contact the MELIA team at the email shown in the README.</li>
+      </ul>
+    </div>
+    <div class="modal-actions" style="justify-content: center;">
+      <button class="btn" id="btn-success-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout" id="main-layout" style="display:none;">
+  <header class="masthead">
+    <div class="mast-meta">ICAR · Framework Builder</div>
+    <h1 class="mast-title">Theory of <span>Change</span></h1>
+    <div class="mast-meta right">Vol. 01 · Edition 2026</div>
+    <p class="mast-sub">— a guided, conversational pathway from inputs to impact —</p>
+    <div class="user-badge" id="user-badge"></div>
+  </header>
+
+  <div class="grid">
+    <aside class="stepper" id="stepper">
+      <h3>The 8 Steps</h3>
+      <div id="step-list"></div>
+      <div class="stepper-actions">
+        <button class="btn ghost small" id="btn-summary">View Summary</button>
+        <button class="btn ghost small" id="btn-reset">Reset All</button>
+      </div>
+    </aside>
+
+    <main>
+      <div class="chat-panel">
+        <div class="chat-header">
+          <div class="chat-title" id="chat-title">Welcome</div>
+          <div class="chat-step-tag" id="chat-tag">Step 0 / 8</div>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+          <div class="input-row">
+            <textarea class="user-input" id="user-input" placeholder="Type your response here... (Shift+Enter for newline, Enter to send)"></textarea>
+            <button class="btn accent" id="btn-send">Send →</button>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn ghost small" id="btn-prev">← Previous</button>
+            <button class="btn ghost small" id="btn-skip">Skip Step</button>
+            <button class="btn ghost small" id="btn-edit-prev">Edit Last Answer</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="summary-panel" id="summary-panel">
+        <div class="summary-header">
+          <h2>Your Theory of Change</h2>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn small accent" id="btn-export-pptx">↓ Download PPTX</button>
+            <button class="btn small green" id="btn-submit-melia">→ Submit to MELIA</button>
+            <button class="btn ghost small" id="btn-export-json">↓ Save JSON</button>
+            <button class="btn ghost small" id="btn-print">Print</button>
+          </div>
+        </div>
+        <div id="summary-content"></div>
+        <div class="pathway-wrap">
+          <h3>Impact Pathway Diagram</h3>
+          <div id="pathway-diagram"></div>
+        </div>
+        <div class="privacy-note">
+          <strong>Privacy Notice</strong>
+          Your answers stay in your browser unless you click <em>Submit to MELIA</em>. Submission is voluntary, with consent, and handled per ICAR norms and India's Digital Personal Data Protection Act, 2023.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <span>Built for ICAR · Aligned with national priorities</span>
+    <span>Open framework · <a href="https://github.com/MELIA-ICAR/ToC" target="_blank" rel="noopener">View on GitHub</a></span>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Saved</div>
+
+<script>
+/* ============================================================
+   THEORY OF CHANGE — Conversational Builder
+   ============================================================ */
+
+/* ===== GOOGLE FORM CONFIGURATION =====
+   See SETUP_GOOGLE_FORM.md for step-by-step setup.
+   Leaving placeholders will gracefully hide the "Submit to MELIA" button.
+*/
+const GOOGLE_FORM = {
+  formActionUrl: "PASTE_YOUR_FORM_RESPONSE_URL_HERE",
+  fields: {
+    user:        "entry.111111111",
+    institute:   "entry.222222222",
+    email:       "entry.333333333",
+    project:     "entry.444444444",
+    impact:      "entry.555555555",
+    outcomes:    "entry.666666666",
+    outputs:     "entry.777777777",
+    activities:  "entry.888888888",
+    assumptions: "entry.999999999",
+    indicators:  "entry.101010101",
+    validation:  "entry.121212121",
+    notes:       "entry.131313131",
+    timestamp:   "entry.141414141"
+  }
+};
+const SUBMISSION_ENABLED = GOOGLE_FORM.formActionUrl && !GOOGLE_FORM.formActionUrl.includes("PASTE_YOUR");
+
+const STEPS = [
+  { key: 'impact', label: 'Long-term Impact', title: 'Defining the Long-term Impact',
+    prompt: `Let's start at the top of the pyramid. <b>What is the long-term change your project/programme is envisaging?</b><br><br>Think 5–10+ years out. This should align with <b>ICAR goals</b> and <b>national priorities</b> (e.g., farmer welfare, food security, climate resilience, doubling farmers' income).`,
+    hint: 'A strong impact statement names <i>who</i> benefits, <i>what</i> changes for them, and <i>why</i> it matters at scale.',
+    example: 'Improved livelihoods of smallholder farmers in semi-arid regions through increased productivity of pearl millet.' },
+  { key: 'outcomes', label: 'Outcomes (medium-term)', title: 'Identifying Outcomes',
+    prompt: `Now, the <b>medium-term results</b> that will contribute to that impact.<br><br>List 2–4 outcomes — the changes in <b>behaviour, practice, or systems</b> you expect once outputs are taken up. They should be <b>specific, measurable, and achievable</b> in a realistic timeframe.`,
+    hint: 'Outcomes ≠ outputs. An output is a <i>product</i>; an outcome is the <i>change it causes</i> in people or systems.',
+    example: 'Adoption of the new pearl millet variety by 30% of farmers in the target districts within 3 years.' },
+  { key: 'outputs', label: 'Outputs (products)', title: 'Mapping Outputs',
+    prompt: `What are the <b>direct, tangible results</b> of your project activities? Outputs are <b>products or deliverables</b> — they lead to outcomes but are not themselves the change.<br><br>List your key outputs.`,
+    hint: 'If you can point to it, count it, or hand it over — it\'s probably an output.',
+    example: 'A new drought-tolerant pearl millet variety released; 500 trained extension officers; 12 demonstration plots established.' },
+  { key: 'activities', label: 'Activities / Inputs', title: 'Listing Activities & Inputs',
+    prompt: `What <b>interventions, actions, or programmes</b> will produce those outputs? Also list the <b>inputs</b> (funds, staff, equipment, partnerships) needed.<br><br>Each activity should be linked to an output above.`,
+    hint: 'Be concrete. "Capacity building" is vague; "5-day residential training for 200 KVK staff" is an activity.',
+    example: 'Conducting multi-location field trials; molecular breeding work; farmer participatory variety selection; training-of-trainers programme.' },
+  { key: 'assumptions', label: 'Assumptions', title: 'Identifying Assumptions',
+    prompt: `What <b>conditions must hold true</b> for your causal pathway to work? Make these <b>explicit</b>. Also note <b>external factors</b> (climate, policy, markets) that could derail outcomes.`,
+    hint: 'Every arrow in a ToC sits on top of one or more assumptions. Surface them now — they become your risk register later.',
+    example: 'Farmers have access to seeds and credit; monsoon remains within normal variability; minimum support price policy remains stable; no major pest outbreak.' },
+  { key: 'indicators', label: 'Indicators (SMART)', title: 'Defining Indicators',
+    prompt: `How will you <b>measure</b> progress at each level — activity, output, outcome, and impact?<br><br>Indicators should be <b>SMART</b>: Specific, Measurable, Achievable, Relevant, Time-bound.`,
+    hint: 'Pair each indicator with a baseline and a target. "Yield increase" isn\'t SMART; "Average yield rises from 800 kg/ha to 1,200 kg/ha by year 4" is.',
+    example: 'Impact: % increase in net farm income (baseline ₹X, target ₹Y by 2029). Outcome: # of farmers adopting variety. Output: # of certified seed tonnes distributed.' },
+  { key: 'validation', label: 'Validation by Stakeholders', title: 'Validating the Pathways',
+    prompt: `Which <b>stakeholders</b> will review and confirm your causal pathways? Note who you\'ve consulted (or will consult) — <b>farmers, researchers, extension agents, policymakers, FPOs, women\'s groups</b> — and any feedback received.`,
+    hint: 'A ToC validated only by the team that wrote it is just a hypothesis. Field validation turns it into a working theory.',
+    example: 'Two farmer focus groups in District A and B; review workshop with state agriculture department; technical review by ICAR institute scientists; FPO consultation.' },
+  { key: 'notes', label: 'Visualisation & Notes', title: 'Visualising the ToC',
+    prompt: `Final step. Any <b>additional notes</b> for the impact pathway diagram? Sequencing, key linkages, or things reviewers should see at a glance?<br><br>When you submit, I\'ll generate the diagram and the full ToC summary, ready for PPTX export.`,
+    hint: 'The impact pathway is the operational view of your ToC — research inputs → outputs (technology) → outcomes → impact, with assumptions floating alongside.',
+    example: 'Highlight the critical assumption around seed system access; show the feedback loop from farmer trials back to breeding programme.' }
+];
+
+let state = {
+  current: 0,
+  answers: {},
+  chatLog: [],
+  user: { name: '', institute: '', email: '', project: '' },
+  submitted: false
+};
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function renderStepper() {
+  const list = document.getElementById('step-list');
+  list.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'step-item' + (i === state.current ? ' active' : '') + (state.answers[s.key] ? ' done' : '');
+    div.innerHTML = `<div class="step-num">0${i+1}</div><div class="step-label">${s.label}</div>`;
+    div.onclick = () => goToStep(i);
+    list.appendChild(div);
+  });
+  document.getElementById('chat-tag').textContent = `Step ${state.current+1} / ${STEPS.length}`;
+  document.getElementById('chat-title').textContent = STEPS[state.current].title;
+}
+
+function addBotMessage(html, hint, example, stepKey) {
+  let body = `<p>${html}</p>`;
+  if (hint) body += `<div class="hint">${hint}</div>`;
+  if (example) body += `<div class="example">${example}</div>`;
+  state.chatLog.push({ role: 'bot', html: body, stepKey });
+  renderChat();
+}
+function addUserMessage(text, stepKey) {
+  state.chatLog.push({ role: 'user', html: `<p>${escapeHtml(text).replace(/\n/g, '<br>')}</p>`, stepKey });
+  renderChat();
+}
+function renderChat() {
+  const box = document.getElementById('chat-messages');
+  box.innerHTML = '';
+  state.chatLog.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + (m.role === 'user' ? 'user' : 'bot');
+    const initial = m.role === 'user'
+      ? (state.user.name ? state.user.name[0].toUpperCase() : 'U')
+      : 'T';
+    div.innerHTML = `<div class="msg-avatar">${initial}</div><div class="msg-body">${m.html}</div>`;
+    box.appendChild(div);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function presentStep(i) {
+  if (i < 0 || i >= STEPS.length) return;
+  state.current = i;
+  const s = STEPS[i];
+  const last = state.chatLog[state.chatLog.length - 1];
+  if (!last || last.stepKey !== s.key || last.role === 'user') {
+    addBotMessage(s.prompt, s.hint, s.example, s.key);
+  }
+  renderStepper();
+  document.getElementById('user-input').value = state.answers[s.key] || '';
+  document.getElementById('user-input').focus();
+}
+function goToStep(i) { presentStep(i); }
+
+function submitAnswer() {
+  const txt = document.getElementById('user-input').value.trim();
+  if (!txt) { toast('Please type a response'); return; }
+  const s = STEPS[state.current];
+  state.answers[s.key] = txt;
+  addUserMessage(txt, s.key);
+  document.getElementById('user-input').value = '';
+
+  if (state.current < STEPS.length - 1) {
+    setTimeout(() => {
+      addBotMessage(`Got it. Step ${state.current+1} captured. <b>Moving to Step ${state.current+2}.</b>`, null, null, s.key);
+      setTimeout(() => presentStep(state.current + 1), 350);
+    }, 200);
+  } else {
+    setTimeout(() => {
+      const submitLine = SUBMISSION_ENABLED
+        ? ' download it as PPTX, submit it to the MELIA team, save the data as JSON, or print it.'
+        : ' download it as PPTX, save the data as JSON, or print it.';
+      addBotMessage(
+        `<b>Excellent — your Theory of Change is complete.</b><br>I've assembled the full framework and generated an impact pathway diagram below. You can${submitLine}`,
+        'Tip: scroll down to review your summary. You can always click any step on the left to revise.',
+        null, s.key
+      );
+      buildSummary();
+      document.getElementById('summary-panel').classList.add('visible');
+      document.getElementById('summary-panel').scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+  }
+}
+
+function buildSummary() {
+  const c = document.getElementById('summary-content');
+  c.innerHTML = '';
+  STEPS.forEach((s, i) => {
+    const ans = state.answers[s.key] || '— (not yet provided)';
+    const sec = document.createElement('div');
+    sec.className = 'summary-section';
+    sec.innerHTML = `<h4>Step ${i+1} · ${s.label}</h4><div class="content">${escapeHtml(ans)}</div>`;
+    c.appendChild(sec);
+  });
+  drawPathwayDiagram();
+  const submitBtn = document.getElementById('btn-submit-melia');
+  if (!SUBMISSION_ENABLED) {
+    submitBtn.style.display = 'none';
+  } else if (state.submitted) {
+    submitBtn.textContent = '✓ Submitted';
+    submitBtn.disabled = true;
+  }
+}
+
+function drawPathwayDiagram() {
+  const get = k => state.answers[k] ? truncate(state.answers[k], 90) : '— pending —';
+  const stages = [
+    { label: 'INPUTS / ACTIVITIES', text: get('activities'), color: '#4a6b3a' },
+    { label: 'OUTPUTS', text: get('outputs'), color: '#d4a017' },
+    { label: 'OUTCOMES', text: get('outcomes'), color: '#c8542b' },
+    { label: 'IMPACT', text: get('impact'), color: '#1a1a1a' }
+  ];
+  const W = 1000, H = 460, boxW = 200, boxH = 130;
+  const gap = (W - 40 - boxW * 4) / 3, startX = 20, boxY = 140;
+  let svg = `<svg class="pathway-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<text x="${W/2}" y="40" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="22" fill="#1a1a1a" font-weight="800">Research inputs → Technology → Adoption → Impact</text>`;
+  svg += `<line x1="40" y1="55" x2="${W-40}" y2="55" stroke="#1a1a1a" stroke-width="1"/>`;
+  const assumps = get('assumptions');
+  svg += `<text x="40" y="85" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5" fill="#c8542b" font-weight="600">ASSUMPTIONS ▼</text>`;
+  svg += `<foreignObject x="40" y="92" width="${W-80}" height="36"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Fraunces,serif; font-style:italic; font-size:12px; color:#3a3a3a; line-height:1.4;">${escapeHtml(truncate(assumps, 200))}</div></foreignObject>`;
+
+  stages.forEach((s, i) => {
+    const x = startX + i * (boxW + gap);
+    if (i > 0) {
+      const ax1 = x - gap + 4, ax2 = x - 4, ay = boxY + boxH/2;
+      svg += `<line x1="${ax1}" y1="${ay}" x2="${ax2 - 8}" y2="${ay}" stroke="#1a1a1a" stroke-width="2"/>`;
+      svg += `<polygon points="${ax2},${ay} ${ax2-10},${ay-6} ${ax2-10},${ay+6}" fill="#1a1a1a"/>`;
+    }
+    svg += `<rect x="${x}" y="${boxY}" width="${boxW}" height="${boxH}" fill="#f4efe6" stroke="${s.color}" stroke-width="2"/>`;
+    svg += `<rect x="${x}" y="${boxY}" width="${boxW}" height="22" fill="${s.color}"/>`;
+    svg += `<text x="${x + boxW/2}" y="${boxY + 15}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.5" fill="#f4efe6" font-weight="600">${s.label}</text>`;
+    svg += `<foreignObject x="${x + 8}" y="${boxY + 28}" width="${boxW - 16}" height="${boxH - 36}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Inter Tight',sans-serif; font-size:11px; color:#1a1a1a; line-height:1.35; overflow:hidden;">${escapeHtml(s.text)}</div></foreignObject>`;
+  });
+  const ind = get('indicators');
+  svg += `<text x="40" y="${boxY + boxH + 35}" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5" fill="#4a6b3a" font-weight="600">INDICATORS (SMART) ▲</text>`;
+  svg += `<foreignObject x="40" y="${boxY + boxH + 42}" width="${W-80}" height="40"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Fraunces,serif; font-style:italic; font-size:12px; color:#3a3a3a; line-height:1.4;">${escapeHtml(truncate(ind, 220))}</div></foreignObject>`;
+  svg += `</svg>`;
+  document.getElementById('pathway-diagram').innerHTML = svg;
+}
+function truncate(s, n) { return !s ? '' : (s.length > n ? s.slice(0, n - 1) + '…' : s); }
+
+function exportPPTX() {
+  if (typeof PptxGenJS === 'undefined') { toast('PPTX library not loaded'); return; }
+  const pres = new PptxGenJS();
+  pres.layout = 'LAYOUT_WIDE';
+  pres.title = 'Theory of Change';
+  pres.author = state.user.name || 'ICAR ToC Builder';
+
+  const PAPER='F4EFE6', INK='1A1A1A', ACCENT='C8542B', GREEN='4A6B3A', GOLD='D4A017';
+
+  let s = pres.addSlide();
+  s.background = { color: PAPER };
+  s.addText('ICAR · MELIA Framework Builder', { x:0.5, y:0.4, w:8, h:0.3, fontFace:'Courier New', fontSize:10, color:INK, charSpacing:2 });
+  s.addText('Theory of Change', { x:0.5, y:1.5, w:12, h:1.5, fontFace:'Georgia', italic:true, bold:true, fontSize:60, color:INK });
+  s.addText(state.user.project || 'A guided pathway from inputs to impact.', { x:0.5, y:3.0, w:12, h:0.5, fontFace:'Georgia', italic:true, fontSize:20, color:'3A3A3A' });
+  s.addShape('line', { x:0.5, y:3.8, w:12.3, h:0, line:{ color:INK, width:1.5 } });
+
+  s.addText('PREPARED BY', { x:0.5, y:4.2, w:3, h:0.3, fontFace:'Courier New', fontSize:10, color:ACCENT, bold:true, charSpacing:3 });
+  s.addText(state.user.name || '—', { x:0.5, y:4.55, w:6, h:0.4, fontFace:'Georgia', fontSize:18, color:INK, bold:true });
+  s.addText(state.user.institute || '—', { x:0.5, y:5.0, w:6, h:0.4, fontFace:'Georgia', italic:true, fontSize:14, color:'3A3A3A' });
+  if (state.user.email) {
+    s.addText(state.user.email, { x:0.5, y:5.4, w:6, h:0.3, fontFace:'Courier New', fontSize:10, color:'3A3A3A' });
+  }
+  s.addText(`Generated: ${new Date().toLocaleDateString()}`, { x:0.5, y:6.8, w:6, h:0.3, fontFace:'Courier New', fontSize:9, color:'3A3A3A' });
+  s.addText('Vol. 01 · Edition 2026', { x:6.8, y:6.8, w:6, h:0.3, fontFace:'Courier New', fontSize:9, color:'3A3A3A', align:'right' });
+
+  s = pres.addSlide();
+  s.background = { color: PAPER };
+  s.addText('Impact Pathway', { x:0.5, y:0.3, w:12, h:0.6, fontFace:'Georgia', italic:true, bold:true, fontSize:32, color:INK });
+  s.addText('Research inputs → Technology → Adoption → Impact', { x:0.5, y:1.0, w:12, h:0.4, fontFace:'Georgia', italic:true, fontSize:16, color:'3A3A3A' });
+  s.addShape('line', { x:0.5, y:1.5, w:12.3, h:0, line:{ color:INK, width:1 } });
+  s.addText('ASSUMPTIONS ▼', { x:0.5, y:1.7, w:3, h:0.3, fontFace:'Courier New', fontSize:9, color:ACCENT, bold:true, charSpacing:2 });
+  s.addText(state.answers.assumptions || '— pending —', { x:0.5, y:2.0, w:12.3, h:0.7, fontFace:'Georgia', italic:true, fontSize:11, color:'3A3A3A', valign:'top' });
+
+  const stages = [
+    { label:'INPUTS / ACTIVITIES', text: state.answers.activities, color: GREEN },
+    { label:'OUTPUTS', text: state.answers.outputs, color: GOLD },
+    { label:'OUTCOMES', text: state.answers.outcomes, color: ACCENT },
+    { label:'IMPACT', text: state.answers.impact, color: INK }
+  ];
+  const boxW = 2.8, boxH = 2.2, gap = 0.25;
+  const totalW = boxW * 4 + gap * 3, startX = (13.33 - totalW) / 2, boxY = 3.0;
+
+  stages.forEach((st, i) => {
+    const x = startX + i * (boxW + gap);
+    s.addShape('rect', { x, y: boxY, w: boxW, h: 0.35, fill:{ color: st.color }, line:{ color: st.color } });
+    s.addText(st.label, { x, y: boxY, w: boxW, h: 0.35, fontFace:'Courier New', fontSize:10, color:PAPER, bold:true, align:'center', valign:'middle', charSpacing:2 });
+    s.addShape('rect', { x, y: boxY + 0.35, w: boxW, h: boxH - 0.35, fill:{ color: PAPER }, line:{ color: st.color, width: 1.5 } });
+    s.addText(st.text || '— pending —', { x: x + 0.1, y: boxY + 0.45, w: boxW - 0.2, h: boxH - 0.5, fontFace:'Calibri', fontSize:11, color: INK, valign:'top' });
+    if (i < 3) {
+      const ax = x + boxW + 0.02, ay = boxY + boxH/2;
+      s.addShape('line', { x:ax, y:ay, w:gap - 0.08, h:0, line:{ color:INK, width:2 } });
+      s.addShape('triangle', { x: ax + gap - 0.14, y: ay - 0.08, w: 0.14, h: 0.16, fill:{ color:INK }, line:{ color:INK }, rotate: 90 });
+    }
+  });
+  s.addText('INDICATORS (SMART) ▲', { x:0.5, y: boxY + boxH + 0.2, w:4, h:0.3, fontFace:'Courier New', fontSize:9, color:GREEN, bold:true, charSpacing:2 });
+  s.addText(state.answers.indicators || '— pending —', { x:0.5, y: boxY + boxH + 0.5, w:12.3, h:0.7, fontFace:'Georgia', italic:true, fontSize:11, color:'3A3A3A', valign:'top' });
+
+  STEPS.forEach((step, i) => {
+    s = pres.addSlide();
+    s.background = { color: PAPER };
+    s.addText(`STEP ${String(i+1).padStart(2,'0')}`, { x:0.5, y:0.4, w:3, h:0.3, fontFace:'Courier New', fontSize:11, color:ACCENT, bold:true, charSpacing:3 });
+    s.addText(step.title, { x:0.5, y:0.8, w:12, h:0.8, fontFace:'Georgia', italic:true, bold:true, fontSize:32, color:INK });
+    s.addShape('line', { x:0.5, y:1.7, w:12.3, h:0, line:{ color:INK, width:1 } });
+    s.addText(step.label.toUpperCase(), { x:0.5, y:2.0, w:6, h:0.3, fontFace:'Courier New', fontSize:9, color:'3A3A3A', bold:true, charSpacing:2 });
+    s.addText(state.answers[step.key] || '— pending —', { x:0.5, y:2.4, w:12.3, h:4.5, fontFace:'Georgia', fontSize:18, color:INK, valign:'top', isTextBox: true });
+    s.addText(`${i+1} / ${STEPS.length}`, { x:11.8, y:6.9, w:1, h:0.3, fontFace:'Courier New', fontSize:9, color:'3A3A3A', align:'right' });
+    s.addText(state.user.name || '', { x:0.5, y:6.9, w:6, h:0.3, fontFace:'Courier New', fontSize:9, color:'3A3A3A' });
+  });
+
+  s = pres.addSlide();
+  s.background = { color: PAPER };
+  s.addText('Theory of Change · Summary', { x:0.5, y:0.4, w:12, h:0.6, fontFace:'Georgia', italic:true, bold:true, fontSize:28, color:INK });
+  s.addShape('line', { x:0.5, y:1.1, w:12.3, h:0, line:{ color:INK, width:1 } });
+
+  const rows = [
+    [{ text: 'Level', options: { bold:true, fill:{color:INK}, color:PAPER, fontFace:'Courier New', fontSize:10 } },
+     { text: 'Content', options: { bold:true, fill:{color:INK}, color:PAPER, fontFace:'Courier New', fontSize:10 } }]
+  ];
+  STEPS.forEach(step => {
+    rows.push([
+      { text: step.label, options: { bold:true, fontFace:'Calibri', fontSize:10, color:INK, fill:{color:'EBE4D6'} } },
+      { text: truncate(state.answers[step.key] || '— pending —', 280), options: { fontFace:'Calibri', fontSize:10, color:INK } }
+    ]);
+  });
+  s.addTable(rows, { x:0.5, y:1.3, w:12.3, colW:[2.5, 9.8], border:{ type:'solid', color:'C9C0AD', pt:0.5 }, fontSize:10 });
+
+  const safeName = (state.user.institute || 'project').replace(/[^a-zA-Z0-9]/g,'_').slice(0,20);
+  pres.writeFile({ fileName: 'ToC_' + safeName + '_' + new Date().toISOString().slice(0,10) + '.pptx' });
+  toast('PPTX downloaded');
+}
+
+function exportJSON() {
+  const data = {
+    generated: new Date().toISOString(),
+    framework: 'Theory of Change — ICAR',
+    user: state.user,
+    answers: state.answers
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'theory_of_change.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('JSON saved');
+}
+
+function submitToMelia() {
+  return new Promise((resolve, reject) => {
+    if (!SUBMISSION_ENABLED) {
+      reject(new Error('Submission is not configured for this site. Contact the MELIA team.'));
+      return;
+    }
+    const fd = new FormData();
+    fd.append(GOOGLE_FORM.fields.user, state.user.name || '');
+    fd.append(GOOGLE_FORM.fields.institute, state.user.institute || '');
+    fd.append(GOOGLE_FORM.fields.email, state.user.email || '');
+    fd.append(GOOGLE_FORM.fields.project, state.user.project || '');
+    fd.append(GOOGLE_FORM.fields.impact, state.answers.impact || '');
+    fd.append(GOOGLE_FORM.fields.outcomes, state.answers.outcomes || '');
+    fd.append(GOOGLE_FORM.fields.outputs, state.answers.outputs || '');
+    fd.append(GOOGLE_FORM.fields.activities, state.answers.activities || '');
+    fd.append(GOOGLE_FORM.fields.assumptions, state.answers.assumptions || '');
+    fd.append(GOOGLE_FORM.fields.indicators, state.answers.indicators || '');
+    fd.append(GOOGLE_FORM.fields.validation, state.answers.validation || '');
+    fd.append(GOOGLE_FORM.fields.notes, state.answers.notes || '');
+    fd.append(GOOGLE_FORM.fields.timestamp, new Date().toISOString());
+
+    fetch(GOOGLE_FORM.formActionUrl, { method: 'POST', mode: 'no-cors', body: fd })
+      .then(() => resolve())
+      .catch(err => reject(err));
+  });
+}
+
+/* EVENT WIRING */
+document.getElementById('btn-start').onclick = () => {
+  const user = document.getElementById('in-user').value.trim();
+  const inst = document.getElementById('in-inst').value.trim();
+  const email = document.getElementById('in-email').value.trim();
+  const project = document.getElementById('in-project').value.trim();
+  const err = document.getElementById('welcome-error');
+
+  if (!user) { err.textContent = '⚠ Please enter your name to continue.'; return; }
+  if (!inst) { err.textContent = '⚠ Please enter your institute to continue.'; return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.textContent = '⚠ Please enter a valid email address (or leave blank).'; return;
+  }
+  state.user = { name: user, institute: inst, email, project };
+  document.getElementById('welcome-modal').classList.remove('visible');
+  document.getElementById('main-layout').style.display = 'block';
+
+  const badge = document.getElementById('user-badge');
+  let badgeText = `Builder: <strong>${escapeHtml(user)}</strong> · ${escapeHtml(inst)}`;
+  if (project) badgeText += ` · "${escapeHtml(project)}"`;
+  badge.innerHTML = badgeText;
+  init();
+};
+
+['in-user', 'in-inst', 'in-email', 'in-project'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-start').click(); }
+  });
+});
+
+document.getElementById('btn-submit-melia').onclick = () => {
+  if (state.submitted) { toast('Already submitted'); return; }
+  document.getElementById('consent-check').checked = false;
+  document.getElementById('btn-submit-confirm').disabled = true;
+  document.getElementById('submit-error').textContent = '';
+  document.getElementById('submit-btn-text').textContent = 'Submit Now';
+  document.getElementById('submit-modal').classList.add('visible');
+};
+document.getElementById('consent-check').onchange = (e) => {
+  document.getElementById('btn-submit-confirm').disabled = !e.target.checked;
+};
+document.getElementById('btn-submit-cancel').onclick = () => {
+  document.getElementById('submit-modal').classList.remove('visible');
+};
+document.getElementById('btn-submit-confirm').onclick = async () => {
+  const btn = document.getElementById('btn-submit-confirm');
+  const btnText = document.getElementById('submit-btn-text');
+  const err = document.getElementById('submit-error');
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span>Sending…';
+  err.textContent = '';
+  try {
+    await submitToMelia();
+    state.submitted = true;
+    document.getElementById('submit-modal').classList.remove('visible');
+    document.getElementById('success-modal').classList.add('visible');
+    const sb = document.getElementById('btn-submit-melia');
+    sb.textContent = '✓ Submitted';
+    sb.disabled = true;
+  } catch (e) {
+    err.textContent = '⚠ Submission failed: ' + e.message + ' Please try again, or save JSON and email it instead.';
+    btn.disabled = false;
+    btnText.textContent = 'Submit Now';
+  }
+};
+document.getElementById('btn-success-close').onclick = () => {
+  document.getElementById('success-modal').classList.remove('visible');
+};
+
+document.getElementById('btn-send').onclick = submitAnswer;
+document.getElementById('user-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitAnswer(); }
+});
+document.getElementById('btn-prev').onclick = () => { if (state.current > 0) presentStep(state.current - 1); };
+document.getElementById('btn-skip').onclick = () => {
+  if (state.current < STEPS.length - 1) presentStep(state.current + 1);
+  else { buildSummary(); document.getElementById('summary-panel').classList.add('visible'); }
+};
+document.getElementById('btn-edit-prev').onclick = () => {
+  delete state.answers[STEPS[state.current].key];
+  state.chatLog = state.chatLog.filter(m => !(m.role === 'user' && m.stepKey === STEPS[state.current].key));
+  renderStepper();
+  renderChat();
+  presentStep(state.current);
+};
+document.getElementById('btn-summary').onclick = () => {
+  buildSummary();
+  document.getElementById('summary-panel').classList.add('visible');
+  document.getElementById('summary-panel').scrollIntoView({ behavior:'smooth' });
+};
+document.getElementById('btn-reset').onclick = () => {
+  if (!confirm('Reset all answers and start over? Your name and institute will be kept.')) return;
+  state.current = 0;
+  state.answers = {};
+  state.chatLog = [];
+  state.submitted = false;
+  document.getElementById('summary-panel').classList.remove('visible');
+  init();
+};
+document.getElementById('btn-export-pptx').onclick = exportPPTX;
+document.getElementById('btn-export-json').onclick = exportJSON;
+document.getElementById('btn-print').onclick = () => window.print();
+
+function init() {
+  if (state.chatLog.length === 0) {
+    const greeting = state.user.name ? `<b>Welcome, ${escapeHtml(state.user.name)}.</b>` : `<b>Welcome.</b>`;
+    addBotMessage(
+      `${greeting} I\'ll walk you through the 8 steps of building a <b>Theory of Change</b> for your project — aligned with ICAR goals and national priorities.<br><br>At any point you can click a step on the left to revisit it, or hit <b>"View Summary"</b> to see your full framework and download it as a PowerPoint.`,
+      'Tip: be specific. The clearer each step, the stronger your causal pathway.',
+      null, 'intro'
+    );
+  }
+  presentStep(state.current);
+  renderChat();
+}
+</script>
+</body>
+</html>
