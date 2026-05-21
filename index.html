@@ -778,28 +778,68 @@ FF<!DOCTYPE html>
    Leaving placeholders will gracefully hide the "Submit to MELIA" button.
 */
 const GOOGLE_FORM = {
- publicUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/viewform",
   
   formActionUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/formResponse",
   fields: {
-    user:        "entry.123456789",
-    institute:   "entry.987654321",
-    email:       "entry.111111111",
-    project:     "entry.222222222",
-    impact:      "entry.333333333",
-    outcomes:    "entry.444444444",
-    outputs:     "entry.555555555",
-    activities:  "entry.666666666",
-    assumptions: "entry.777777777",
-    indicators:  "entry.888888888",
-    validation:  "entry.999999999",
-    notes:       "entry.101010101",
-    timestamp:   "entry.121212121"
+    user:        "entry.REAL_NAME_ID",
+    institute: "entry.REAL_INSTITUTE_ID",
+    email: "entry.REAL_EMAIL_ID",
+    project:     "entry.PROJECT_ID",
+    impact:      "entry.IMPACT_ID",
+    outcomes:    "entry.OUTCOMES_ID",
+    outputs:     "entry.OUTPUTS_ID",
+    activities:  "entry.ACTIVITIES_ID",
+    assumptions: "entry.ASSUMPTIONS_ID",
+    indicators:  "entry.INDICATORS_ID",
+    validation:  "entry.VALIDATION_ID",
+    notes:       "entry.NOTES_ID",
+    timestamp:   "entry.TIMESTAMP_ID"
   }
 };
 const SUBMISSION_ENABLED =
   GOOGLE_FORM.formActionUrl.includes("formResponse");
 
+ async function saveQueryToGoogleForm(queryText) {
+
+  const formData = new FormData();
+
+  formData.append(
+    GOOGLE_FORM.fields.user,
+    state.user.name
+  );
+
+  formData.append(
+    GOOGLE_FORM.fields.institute,
+    state.user.institute
+  );
+
+  formData.append(
+    GOOGLE_FORM.fields.email,
+    state.user.email
+  );
+
+  formData.append(
+    GOOGLE_FORM.fields.query,
+    queryText
+  );
+
+  try {
+
+    await fetch(GOOGLE_FORM.formActionUrl, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
+    });
+
+    console.log("Saved to Google Form");
+
+  } catch (error) {
+
+    console.error("Submission Error:", error);
+
+  }
+}
+  
 const STEPS = [
   { key: 'impact', label: 'Long-term Impact', title: 'Defining the Long-term Impact',
     prompt: `Let's start at the top of the pyramid. <b>What is the long-term change your project/programme is envisaging?</b><br><br>Think 5–10+ years out. This should align with <b>ICAR goals</b> and <b>national priorities</b> (e.g., farmer welfare, food security, climate resilience, doubling farmers' income).`,
@@ -912,8 +952,11 @@ function submitAnswer() {
   if (!txt) { toast('Please type a response'); return; }
   const s = STEPS[state.current];
   state.answers[s.key] = txt;
-  addUserMessage(txt, s.key);
-  document.getElementById('user-input').value = '';
+ addUserMessage(txt, s.key);
+
+saveQueryToGoogleForm(txt);
+
+document.getElementById('user-input').value = '';
 
   if (state.current < STEPS.length - 1) {
     setTimeout(() => {
