@@ -778,24 +778,27 @@ FF<!DOCTYPE html>
    Leaving placeholders will gracefully hide the "Submit to MELIA" button.
 */
 const GOOGLE_FORM = {
-  formActionUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/viewform?pli=1",
+ publicUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/viewform",
+  
+  formActionUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/formResponse",
   fields: {
-    user:        "entry.111111111",
-    institute:   "entry.222222222",
-    email:       "entry.333333333",
-    project:     "entry.444444444",
-    impact:      "entry.555555555",
-    outcomes:    "entry.666666666",
-    outputs:     "entry.777777777",
-    activities:  "entry.888888888",
-    assumptions: "entry.999999999",
-    indicators:  "entry.101010101",
-    validation:  "entry.121212121",
-    notes:       "entry.131313131",
-    timestamp:   "entry.141414141"
+    user:        "entry.123456789",
+    institute:   "entry.987654321",
+    email:       "entry.111111111",
+    project:     "entry.222222222",
+    impact:      "entry.333333333",
+    outcomes:    "entry.444444444",
+    outputs:     "entry.555555555",
+    activities:  "entry.666666666",
+    assumptions: "entry.777777777",
+    indicators:  "entry.888888888",
+    validation:  "entry.999999999",
+    notes:       "entry.101010101",
+    timestamp:   "entry.121212121"
   }
 };
-const SUBMISSION_ENABLED = GOOGLE_FORM.formActionUrl && !GOOGLE_FORM.formActionUrl.includes("PASTE_YOUR");
+const SUBMISSION_ENABLED =
+  GOOGLE_FORM.formActionUrl.includes("formResponse");
 
 const STEPS = [
   { key: 'impact', label: 'Long-term Impact', title: 'Defining the Long-term Impact',
