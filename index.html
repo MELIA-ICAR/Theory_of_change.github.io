@@ -1,4 +1,4 @@
-FF<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -781,65 +781,24 @@ const GOOGLE_FORM = {
   
   formActionUrl: "https://docs.google.com/forms/d/e/1FAIpQLSeRqILhQ9h3Y__sMGTphFachEWsnWDNzUxV5-FSgOFis1WE0w/formResponse",
   fields: {
-    user:        "entry.REAL_NAME_ID",
-    institute: "entry.REAL_INSTITUTE_ID",
-    email: "entry.REAL_EMAIL_ID",
-    project:     "entry.PROJECT_ID",
-    impact:      "entry.IMPACT_ID",
-    outcomes:    "entry.OUTCOMES_ID",
-    outputs:     "entry.OUTPUTS_ID",
-    activities:  "entry.ACTIVITIES_ID",
-    assumptions: "entry.ASSUMPTIONS_ID",
-    indicators:  "entry.INDICATORS_ID",
-    validation:  "entry.VALIDATION_ID",
-    notes:       "entry.NOTES_ID",
-    timestamp:   "entry.TIMESTAMP_ID"
+    user:        "entry.1679468825",
+    institute:   "entry.284071372",
+    email:       "entry.2062398330",
+    project:     "entry.503145836",
+    impact:      "entry.1728582679",
+    outcomes:    "entry.1774944452",
+    outputs:     "entry.1977290206",
+    activities:  "entry.1845854773",
+    assumptions: "entry.1820024359",
+    indicators:  "entry.1942046591",
+    validation:  "entry.1753158740",
+    notes:       "entry.1929466224",
+    timestamp:   "entry.809975111"
   }
 };
 const SUBMISSION_ENABLED =
   GOOGLE_FORM.formActionUrl.includes("formResponse");
 
- async function saveQueryToGoogleForm(queryText) {
-
-  const formData = new FormData();
-
-  formData.append(
-    GOOGLE_FORM.fields.user,
-    state.user.name
-  );
-
-  formData.append(
-    GOOGLE_FORM.fields.institute,
-    state.user.institute
-  );
-
-  formData.append(
-    GOOGLE_FORM.fields.email,
-    state.user.email
-  );
-
-  formData.append(
-    GOOGLE_FORM.fields.query,
-    queryText
-  );
-
-  try {
-
-    await fetch(GOOGLE_FORM.formActionUrl, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData
-    });
-
-    console.log("Saved to Google Form");
-
-  } catch (error) {
-
-    console.error("Submission Error:", error);
-
-  }
-}
-  
 const STEPS = [
   { key: 'impact', label: 'Long-term Impact', title: 'Defining the Long-term Impact',
     prompt: `Let's start at the top of the pyramid. <b>What is the long-term change your project/programme is envisaging?</b><br><br>Think 5–10+ years out. This should align with <b>ICAR goals</b> and <b>national priorities</b> (e.g., farmer welfare, food security, climate resilience, doubling farmers' income).`,
@@ -953,8 +912,6 @@ function submitAnswer() {
   const s = STEPS[state.current];
   state.answers[s.key] = txt;
  addUserMessage(txt, s.key);
-
-saveQueryToGoogleForm(txt);
 
 document.getElementById('user-input').value = '';
 
