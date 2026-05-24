@@ -6,520 +6,650 @@
 <title>Theory of Change Builder — ICAR Framework</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
   :root {
-    --paper: #f4efe6;
-    --paper-2: #ebe4d6;
-    --ink: #1a1a1a;
-    --ink-soft: #3a3a3a;
-    --accent: #c8542b;
-    --accent-2: #4a6b3a;
-    --accent-3: #d4a017;
-    --line: #2a2a2a;
-    --line-soft: #c9c0ad;
+    --bg: #ffffff;
+    --surface: #f6f5f1;
+    --surface-2: #ecebe5;
+    --ink: #101010;
+    --ink-soft: #4a4a48;
+    --ink-faint: #7a7a76;
+    --rule: #1a1a1a;
+    --rule-soft: #d8d6cc;
+    --primary: #1d3b2a;
+    --primary-soft: #2d5a40;
+    --accent: #c66b2f;
+    --accent-soft: #f3e6d8;
+    --gold: #a07a1a;
+    --warn: #b53826;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     height: 100%;
-    background: var(--paper);
+    background: var(--bg);
     color: var(--ink);
-    font-family: 'Inter Tight', sans-serif;
-    font-size: 15px;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 14.5px;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
   }
   body {
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(200,84,43,0.06) 0%, transparent 40%),
-      radial-gradient(circle at 80% 80%, rgba(74,107,58,0.05) 0%, transparent 45%);
-    background-attachment: fixed;
     min-height: 100vh;
     overflow-x: hidden;
   }
+  /* Top accent stripe — institutional marker */
   body::before {
     content: '';
     position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.4;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/></svg>");
-    z-index: 0;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--primary);
+    z-index: 10;
   }
   .layout {
     position: relative;
     z-index: 1;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 32px 24px 48px;
+    padding: 40px 28px 56px;
   }
+
+  /* ===== MASTHEAD ===== */
   header.masthead {
-    border-bottom: 1.5px solid var(--line);
-    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .mast-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 24px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: end;
-    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .mast-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mast-brand-mark {
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 600;
+    font-size: 14px;
   }
   .mast-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--ink-soft);
+    font-weight: 500;
   }
   .mast-meta.right { text-align: right; }
   .mast-title {
-    font-family: 'Fraunces', serif;
-    font-weight: 800;
-    font-style: italic;
-    font-size: clamp(32px, 5vw, 54px);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-    text-align: center;
+    font-family: 'IBM Plex Serif', serif;
+    font-weight: 600;
+    font-style: normal;
+    font-size: clamp(38px, 5.5vw, 64px);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
     color: var(--ink);
+    margin-bottom: 14px;
   }
-  .mast-title span { font-style: normal; font-weight: 300; color: var(--accent); }
+  .mast-title span {
+    color: var(--primary);
+    font-style: normal;
+    font-weight: 600;
+  }
   .mast-sub {
-    text-align: center;
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
     color: var(--ink-soft);
-    margin-top: 4px;
-    grid-column: 1 / -1;
+    max-width: 640px;
+    line-height: 1.5;
+    font-style: normal;
   }
   .user-badge {
-    margin-top: 8px;
-    text-align: center;
-    grid-column: 1 / -1;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    margin-top: 18px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
     color: var(--ink-soft);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
   }
-  .user-badge strong { color: var(--accent); font-weight: 600; }
+  .user-badge strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
 
+  /* ===== GRID ===== */
   .grid {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 24px;
+    grid-template-columns: 268px 1fr;
+    gap: 28px;
     align-items: start;
   }
   @media (max-width: 880px) {
     .grid { grid-template-columns: 1fr; }
     .stepper { position: static !important; max-height: none !important; }
   }
+
+  /* ===== STEPPER ===== */
   .stepper {
     position: sticky;
-    top: 16px;
-    background: var(--paper-2);
-    border: 1.5px solid var(--line);
-    padding: 18px 16px;
-    max-height: calc(100vh - 32px);
+    top: 24px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 20px 18px;
+    max-height: calc(100vh - 48px);
     overflow-y: auto;
   }
   .stepper h3 {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 14px;
-    color: var(--ink-soft);
-    border-bottom: 1px solid var(--line-soft);
-    padding-bottom: 8px;
+    margin-bottom: 16px;
+    color: var(--ink-faint);
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule-soft);
   }
   .step-item {
     display: flex;
-    gap: 10px;
-    padding: 8px 6px;
+    gap: 12px;
+    padding: 10px 8px;
     cursor: pointer;
-    border-radius: 2px;
     margin-bottom: 2px;
-    transition: background 0.15s;
+    transition: background 0.12s, border-color 0.12s;
     position: relative;
+    border-left: 2px solid transparent;
   }
-  .step-item:hover { background: rgba(0,0,0,0.04); }
-  .step-item.active { background: var(--ink); color: var(--paper); }
-  .step-item.active .step-num { color: var(--accent-3); }
+  .step-item:hover {
+    background: var(--surface);
+    border-left-color: var(--rule-soft);
+  }
+  .step-item.active {
+    background: var(--primary);
+    color: #fff;
+    border-left-color: var(--accent);
+  }
+  .step-item.active .step-num { color: #ffd57a; }
   .step-item.done .step-num::after {
     content: '✓';
     position: absolute;
     margin-left: 4px;
-    color: var(--accent-2);
+    color: var(--primary);
     font-weight: 600;
   }
-  .step-item.active.done .step-num::after { color: var(--accent-3); }
+  .step-item.active.done .step-num::after { color: #ffd57a; }
   .step-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 600;
-    min-width: 22px;
-    color: var(--accent);
+    min-width: 24px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
   }
-  .step-label { font-size: 13px; line-height: 1.3; }
+  .step-label {
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 500;
+  }
   .stepper-actions {
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line-soft);
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule-soft);
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
+  /* ===== CHAT PANEL ===== */
   .chat-panel {
-    background: var(--paper-2);
-    border: 1.5px solid var(--line);
+    background: var(--bg);
+    border: 1px solid var(--rule);
     display: flex;
     flex-direction: column;
     min-height: 70vh;
   }
   .chat-header {
-    padding: 14px 20px;
-    border-bottom: 1.5px solid var(--line);
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--rule);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--primary);
+    color: #fff;
   }
-  .chat-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; }
+  .chat-title {
+    font-family: 'IBM Plex Serif', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
   .chat-step-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: var(--accent);
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.25);
     padding: 4px 10px;
-    border-radius: 2px;
+    font-weight: 600;
   }
   .chat-messages {
     flex: 1;
-    padding: 24px;
+    padding: 26px;
     overflow-y: auto;
     max-height: 60vh;
     display: flex;
     flex-direction: column;
     gap: 18px;
+    background: var(--surface);
   }
-  .msg { display: flex; gap: 12px; animation: fadeUp 0.4s ease both; }
+  .msg {
+    display: flex;
+    gap: 12px;
+    animation: fadeUp 0.35s ease both;
+  }
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .msg-avatar {
     width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--primary);
+    color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Fraunces', serif;
-    font-weight: 800;
-    font-size: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
     flex-shrink: 0;
-    font-style: italic;
+    border-radius: 0;
   }
   .msg.user .msg-avatar { background: var(--accent); }
   .msg-body {
     flex: 1;
-    background: var(--paper);
-    border: 1px solid var(--line-soft);
-    padding: 12px 16px;
-    border-radius: 2px;
+    background: var(--bg);
+    border: 1px solid var(--rule-soft);
+    padding: 14px 16px;
     font-size: 14px;
+    line-height: 1.6;
   }
-  .msg.user .msg-body { background: #fff; border-color: var(--accent); }
+  .msg.user .msg-body {
+    background: var(--bg);
+    border-color: var(--accent);
+    border-left-width: 3px;
+  }
   .msg-body p { margin-bottom: 8px; }
   .msg-body p:last-child { margin-bottom: 0; }
   .msg-body .hint {
-    margin-top: 10px;
+    margin-top: 12px;
     padding: 10px 12px;
-    background: rgba(212,160,23,0.12);
-    border-left: 3px solid var(--accent-3);
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
     font-size: 13px;
-    font-style: italic;
     color: var(--ink-soft);
-    font-family: 'Fraunces', serif;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-style: normal;
+    line-height: 1.5;
+  }
+  .msg-body .hint::before {
+    content: 'TIP · ';
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.1em;
   }
   .msg-body .example {
     margin-top: 8px;
     font-size: 12.5px;
     color: var(--ink-soft);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.5;
+    padding: 8px 10px;
+    background: var(--surface-2);
+    border-left: 2px solid var(--ink-faint);
   }
-  .msg-body .example::before { content: 'e.g. '; color: var(--accent); font-weight: 600; }
+  .msg-body .example::before {
+    content: 'EXAMPLE · ';
+    color: var(--primary);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
 
   .chat-input {
-    border-top: 1.5px solid var(--line);
-    padding: 16px 20px;
-    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    padding: 16px 22px;
+    background: var(--bg);
   }
   .input-row { display: flex; gap: 10px; align-items: flex-end; }
   textarea.user-input {
     flex: 1;
     min-height: 60px;
     max-height: 200px;
-    padding: 10px 14px;
-    background: var(--paper);
-    border: 1.5px solid var(--line);
-    font-family: inherit;
+    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    font-family: 'IBM Plex Sans', sans-serif;
     font-size: 14px;
     line-height: 1.5;
     resize: vertical;
     color: var(--ink);
     outline: none;
+    transition: border-color 0.12s;
   }
-  textarea.user-input:focus { border-color: var(--accent); }
+  textarea.user-input:focus { border-color: var(--primary); }
 
+  /* ===== BUTTONS ===== */
   .btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: 0.01em;
     padding: 10px 16px;
-    border: 1.5px solid var(--ink);
+    border: 1px solid var(--ink);
     background: var(--ink);
-    color: var(--paper);
+    color: #fff;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
     border-radius: 0;
+    text-transform: none;
   }
-  .btn:hover { background: var(--accent); border-color: var(--accent); }
-  .btn.ghost { background: transparent; color: var(--ink); }
-  .btn.ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .btn.small { padding: 6px 10px; font-size: 10px; }
-  .btn.accent { background: var(--accent); border-color: var(--accent); }
-  .btn.accent:hover { background: var(--accent-2); border-color: var(--accent-2); }
-  .btn.green { background: var(--accent-2); border-color: var(--accent-2); color: var(--paper); }
-  .btn.green:hover { background: var(--ink); border-color: var(--ink); }
+  .btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  .btn.ghost:hover {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+  .btn.small {
+    padding: 6px 12px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .btn.accent {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .btn.accent:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary-soft);
+  }
+  .btn.green {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn.green:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+  /* ===== SUMMARY ===== */
   .summary-panel {
-    background: var(--paper-2);
-    border: 1.5px solid var(--line);
-    padding: 24px;
-    margin-top: 24px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 28px;
+    margin-top: 28px;
     display: none;
   }
-  .summary-panel.visible { display: block; animation: fadeUp 0.5s ease both; }
+  .summary-panel.visible { display: block; animation: fadeUp 0.4s ease both; }
   .summary-header {
-    border-bottom: 1.5px solid var(--line);
-    padding-bottom: 12px;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 12px;
   }
   .summary-header h2 {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 800;
+    font-family: 'IBM Plex Serif', serif;
+    font-style: normal;
+    font-weight: 600;
     font-size: 28px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
   .summary-section {
     margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px dashed var(--line-soft);
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--rule-soft);
   }
   .summary-section:last-child { border-bottom: none; }
   .summary-section h4 {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 6px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-weight: 600;
   }
   .summary-section .content {
-    font-family: 'Fraunces', serif;
-    font-size: 17px;
-    line-height: 1.5;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
     color: var(--ink);
     white-space: pre-wrap;
+    font-weight: 400;
   }
   .pathway-wrap {
-    margin-top: 24px;
+    margin-top: 28px;
     overflow-x: auto;
-    background: var(--paper);
-    border: 1.5px solid var(--line);
+    background: var(--surface);
+    border: 1px solid var(--rule);
     padding: 24px;
   }
   .pathway-wrap h3 {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 22px;
-    margin-bottom: 16px;
+    font-family: 'IBM Plex Serif', serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 18px;
     text-align: center;
+    color: var(--ink);
+    letter-spacing: -0.01em;
   }
   .pathway-svg { width: 100%; min-width: 700px; height: auto; }
 
+  /* ===== TOAST ===== */
   .toast {
     position: fixed;
-    bottom: 24px;
+    bottom: 28px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: var(--ink);
-    color: var(--paper);
-    padding: 12px 24px;
-    font-family: 'JetBrains Mono', monospace;
+    color: #fff;
+    padding: 12px 22px;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: 0.05em;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.3s;
+    transition: all 0.25s;
     z-index: 1000;
-    border-left: 4px solid var(--accent-3);
+    border-left: 3px solid var(--accent);
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* MODALS */
+  /* ===== MODALS ===== */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(26,26,26,0.72);
+    background: rgba(16,16,16,0.72);
     z-index: 500;
     display: none;
     align-items: center;
     justify-content: center;
     padding: 20px;
   }
-  .modal-overlay.visible { display: flex; animation: fadeIn 0.25s ease; }
+  .modal-overlay.visible { display: flex; animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .modal {
-    background: var(--paper);
-    border: 2px solid var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--ink);
+    border-top: 4px solid var(--primary);
     max-width: 580px;
     width: 100%;
     max-height: 92vh;
     overflow-y: auto;
-    padding: 36px 36px 28px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 32px 36px 28px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
   }
   .modal-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 10px;
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-weight: 600;
   }
   .modal h2 {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 800;
-    font-size: 32px;
+    font-family: 'IBM Plex Serif', serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 30px;
     line-height: 1.1;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     color: var(--ink);
+    letter-spacing: -0.02em;
   }
-  .modal h2 .alt { font-style: normal; font-weight: 300; color: var(--accent); }
+  .modal h2 .alt {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--primary);
+  }
   .modal-intro {
-    font-family: 'Fraunces', serif;
-    font-size: 16px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14.5px;
     line-height: 1.55;
     color: var(--ink-soft);
-    margin-bottom: 22px;
-    font-style: italic;
+    margin-bottom: 20px;
+    font-style: normal;
   }
   .modal hr.divider {
     border: none;
-    border-top: 1.5px solid var(--ink);
+    border-top: 1px solid var(--rule);
     margin: 18px 0;
   }
   .modal-field { margin-bottom: 16px; }
   .modal-field label {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--ink-soft);
     margin-bottom: 6px;
     font-weight: 600;
   }
-  .modal-field label .req { color: var(--accent); }
+  .modal-field label .req { color: var(--warn); }
   .modal-field input {
     width: 100%;
     padding: 10px 12px;
-    border: 1.5px solid var(--line);
-    background: #fff;
-    font-family: inherit;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    font-family: 'IBM Plex Sans', sans-serif;
     font-size: 14px;
     color: var(--ink);
     outline: none;
+    transition: border-color 0.12s;
   }
-  .modal-field input:focus { border-color: var(--accent); }
+  .modal-field input:focus { border-color: var(--primary); }
   .modal-field .help {
     font-size: 12px;
-    color: var(--ink-soft);
-    margin-top: 4px;
-    font-style: italic;
-    font-family: 'Fraunces', serif;
+    color: var(--ink-faint);
+    margin-top: 5px;
+    font-style: normal;
+    font-family: 'IBM Plex Sans', sans-serif;
   }
   .consent-box {
-    background: var(--paper-2);
-    border-left: 4px solid var(--accent-2);
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
     padding: 14px 16px;
     margin: 16px 0 18px;
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--ink);
   }
   .consent-box strong {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent-2);
+    color: var(--primary);
     margin-bottom: 6px;
     font-weight: 600;
   }
   .consent-box ul {
     margin: 6px 0 0 18px;
-    font-family: 'Fraunces', serif;
-    font-style: italic;
+    font-family: 'IBM Plex Sans', sans-serif;
     color: var(--ink-soft);
   }
-  .consent-box ul li { margin-bottom: 4px; }
+  .consent-box ul li {
+    margin-bottom: 4px;
+    font-style: normal;
+  }
   .modal-actions {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 22px;
     flex-wrap: wrap;
   }
   .modal-error {
-    color: var(--accent);
+    color: var(--warn);
     font-size: 12px;
     margin-top: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono', monospace;
     min-height: 16px;
   }
   .success-icon {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     margin: 0 auto 16px;
-    background: var(--accent-2);
-    color: var(--paper);
+    background: var(--primary);
+    color: #fff;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    font-family: 'Fraunces', serif;
-    font-weight: 800;
+    font-size: 28px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
     animation: pop 0.4s ease;
   }
   @keyframes pop {
     0% { transform: scale(0); }
-    70% { transform: scale(1.15); }
+    70% { transform: scale(1.12); }
     100% { transform: scale(1); }
   }
   .success-modal { text-align: center; }
@@ -538,49 +668,48 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .privacy-note {
-    margin-top: 16px;
-    padding: 12px 14px;
-    background: rgba(74,107,58,0.08);
-    border-left: 3px solid var(--accent-2);
-    font-size: 12px;
-    line-height: 1.5;
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    font-size: 12.5px;
+    line-height: 1.55;
     color: var(--ink-soft);
-    font-family: 'Fraunces', serif;
-    font-style: italic;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-style: normal;
   }
   .privacy-note strong {
     font-style: normal;
     font-weight: 600;
-    color: var(--accent-2);
-    font-family: 'JetBrains Mono', monospace;
+    color: var(--primary);
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
 
   footer {
-    margin-top: 32px;
+    margin-top: 36px;
     padding-top: 18px;
-    border-top: 1.5px solid var(--line);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
+    border-top: 1px solid var(--rule);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
   }
-  footer a { color: var(--accent); text-decoration: none; }
+  footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
   footer a:hover { text-decoration: underline; }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: var(--paper-2); }
-  ::-webkit-scrollbar-thumb { background: var(--line-soft); border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--rule-soft); border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
 </style>
 </head>
 <body>
@@ -606,13 +735,13 @@
     </div>
 
     <div class="modal-field">
-      <label for="in-email">Email <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></label>
+      <label for="in-email">Email <span class="req">*</span></label>
       <input type="email" id="in-email" autocomplete="email" placeholder="you@institute.gov.in" />
       <div class="help">Only used if you later choose to submit your ToC to the MELIA registry.</div>
     </div>
 
     <div class="modal-field">
-      <label for="in-project">Project / Programme name <span style="color:var(--ink-soft);font-weight:400;">(optional)</span></label>
+      <label for="in-project">Project / Programme name <span class="req">*</span></label>
       <input type="text" id="in-project" placeholder="e.g., Drought-tolerant pearl millet for semi-arid zones" />
     </div>
 
@@ -700,10 +829,15 @@
 <!-- MAIN LAYOUT -->
 <div class="layout" id="main-layout" style="display:none;">
   <header class="masthead">
-    <div class="mast-meta">ICAR · Framework Builder</div>
+    <div class="mast-row">
+      <div class="mast-brand">
+        <span class="mast-brand-mark">M</span>
+        <span class="mast-meta">ICAR · MELIA Framework Builder</span>
+      </div>
+      <div class="mast-meta right">Theory of Change · v1.0</div>
+    </div>
     <h1 class="mast-title">Theory of <span>Change</span></h1>
-    <div class="mast-meta right">Vol. 01 · Edition 2026</div>
-    <p class="mast-sub">— a guided, conversational pathway from inputs to impact —</p>
+    <p class="mast-sub">A guided, conversational pathway from inputs to impact — for agricultural research projects aligned with ICAR goals and national priorities.</p>
     <div class="user-badge" id="user-badge"></div>
   </header>
 
@@ -960,19 +1094,19 @@ function buildSummary() {
 function drawPathwayDiagram() {
   const get = k => state.answers[k] ? truncate(state.answers[k], 90) : '— pending —';
   const stages = [
-    { label: 'INPUTS / ACTIVITIES', text: get('activities'), color: '#4a6b3a' },
-    { label: 'OUTPUTS', text: get('outputs'), color: '#d4a017' },
-    { label: 'OUTCOMES', text: get('outcomes'), color: '#c8542b' },
-    { label: 'IMPACT', text: get('impact'), color: '#1a1a1a' }
+    { label: 'INPUTS / ACTIVITIES', text: get('activities'), color: '#1d3b2a' },
+    { label: 'OUTPUTS', text: get('outputs'), color: '#a07a1a' },
+    { label: 'OUTCOMES', text: get('outcomes'), color: '#c66b2f' },
+    { label: 'IMPACT', text: get('impact'), color: '#101010' }
   ];
   const W = 1000, H = 460, boxW = 200, boxH = 130;
   const gap = (W - 40 - boxW * 4) / 3, startX = 20, boxY = 140;
   let svg = `<svg class="pathway-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-  svg += `<text x="${W/2}" y="40" text-anchor="middle" font-family="Fraunces, serif" font-style="italic" font-size="22" fill="#1a1a1a" font-weight="800">Research inputs → Technology → Adoption → Impact</text>`;
+  svg += `<text x="${W/2}" y="40" text-anchor="middle" font-family="'IBM Plex Serif', serif" font-style="normal" font-size="20" fill="#101010" font-weight="600" letter-spacing="-0.5">Research inputs → Technology → Adoption → Impact</text>`;
   svg += `<line x1="40" y1="55" x2="${W-40}" y2="55" stroke="#1a1a1a" stroke-width="1"/>`;
   const assumps = get('assumptions');
-  svg += `<text x="40" y="85" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5" fill="#c8542b" font-weight="600">ASSUMPTIONS ▼</text>`;
-  svg += `<foreignObject x="40" y="92" width="${W-80}" height="36"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Fraunces,serif; font-style:italic; font-size:12px; color:#3a3a3a; line-height:1.4;">${escapeHtml(truncate(assumps, 200))}</div></foreignObject>`;
+  svg += `<text x="40" y="85" font-family="'IBM Plex Mono', monospace" font-size="10" letter-spacing="1.2" fill="#c66b2f" font-weight="600">ASSUMPTIONS ▼</text>`;
+  svg += `<foreignObject x="40" y="92" width="${W-80}" height="36"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'IBM Plex Sans',sans-serif; font-style:normal; font-size:12px; color:#4a4a48; line-height:1.45;">${escapeHtml(truncate(assumps, 200))}</div></foreignObject>`;
 
   stages.forEach((s, i) => {
     const x = startX + i * (boxW + gap);
@@ -981,14 +1115,14 @@ function drawPathwayDiagram() {
       svg += `<line x1="${ax1}" y1="${ay}" x2="${ax2 - 8}" y2="${ay}" stroke="#1a1a1a" stroke-width="2"/>`;
       svg += `<polygon points="${ax2},${ay} ${ax2-10},${ay-6} ${ax2-10},${ay+6}" fill="#1a1a1a"/>`;
     }
-    svg += `<rect x="${x}" y="${boxY}" width="${boxW}" height="${boxH}" fill="#f4efe6" stroke="${s.color}" stroke-width="2"/>`;
+    svg += `<rect x="${x}" y="${boxY}" width="${boxW}" height="${boxH}" fill="#ffffff" stroke="${s.color}" stroke-width="1.5"/>`;
     svg += `<rect x="${x}" y="${boxY}" width="${boxW}" height="22" fill="${s.color}"/>`;
-    svg += `<text x="${x + boxW/2}" y="${boxY + 15}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="1.5" fill="#f4efe6" font-weight="600">${s.label}</text>`;
-    svg += `<foreignObject x="${x + 8}" y="${boxY + 28}" width="${boxW - 16}" height="${boxH - 36}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Inter Tight',sans-serif; font-size:11px; color:#1a1a1a; line-height:1.35; overflow:hidden;">${escapeHtml(s.text)}</div></foreignObject>`;
+    svg += `<text x="${x + boxW/2}" y="${boxY + 15}" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" letter-spacing="1.2" fill="#ffffff" font-weight="600">${s.label}</text>`;
+    svg += `<foreignObject x="${x + 8}" y="${boxY + 28}" width="${boxW - 16}" height="${boxH - 36}"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'IBM Plex Sans',sans-serif; font-size:11px; color:#101010; line-height:1.4; overflow:hidden;">${escapeHtml(s.text)}</div></foreignObject>`;
   });
   const ind = get('indicators');
-  svg += `<text x="40" y="${boxY + boxH + 35}" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="1.5" fill="#4a6b3a" font-weight="600">INDICATORS (SMART) ▲</text>`;
-  svg += `<foreignObject x="40" y="${boxY + boxH + 42}" width="${W-80}" height="40"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Fraunces,serif; font-style:italic; font-size:12px; color:#3a3a3a; line-height:1.4;">${escapeHtml(truncate(ind, 220))}</div></foreignObject>`;
+  svg += `<text x="40" y="${boxY + boxH + 35}" font-family="'IBM Plex Mono', monospace" font-size="10" letter-spacing="1.2" fill="#1d3b2a" font-weight="600">INDICATORS (SMART) ▲</text>`;
+  svg += `<foreignObject x="40" y="${boxY + boxH + 42}" width="${W-80}" height="40"><div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'IBM Plex Sans',sans-serif; font-style:normal; font-size:12px; color:#4a4a48; line-height:1.45;">${escapeHtml(truncate(ind, 220))}</div></foreignObject>`;
   svg += `</svg>`;
   document.getElementById('pathway-diagram').innerHTML = svg;
 }
@@ -1139,9 +1273,11 @@ document.getElementById('btn-start').onclick = () => {
 
   if (!user) { err.textContent = '⚠ Please enter your name to continue.'; return; }
   if (!inst) { err.textContent = '⚠ Please enter your institute to continue.'; return; }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    err.textContent = '⚠ Please enter a valid email address (or leave blank).'; return;
+  if (!email) { err.textContent = '⚠ Please enter your email to continue.'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.textContent = '⚠ Please enter a valid email address.'; return;
   }
+  if (!project) { err.textContent = '⚠ Please enter your project / programme name to continue.'; return; }
   state.user = { name: user, institute: inst, email, project };
   document.getElementById('welcome-modal').classList.remove('visible');
   document.getElementById('main-layout').style.display = 'block';
