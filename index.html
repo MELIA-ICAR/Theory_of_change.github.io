@@ -145,6 +145,83 @@
     .grid { grid-template-columns: 1fr; }
     .stepper { position: static !important; max-height: none !important; }
   }
+  @media (max-width: 600px) {
+    .layout { padding: 24px 16px 40px; }
+    header.masthead { padding-bottom: 18px; margin-bottom: 22px; }
+    .mast-row { margin-bottom: 18px; padding-bottom: 12px; }
+    .mast-title { font-size: 36px; margin-bottom: 10px; }
+    .mast-sub { font-size: 14px; }
+    .user-badge { font-size: 11px; padding: 8px 12px; }
+
+    .stepper { padding: 14px 14px; }
+    .step-item { padding: 12px 8px; }   /* bigger touch target */
+
+    /* Collapsible step list on phones */
+    .stepper .steps-details > summary {
+      cursor: pointer;
+      margin-bottom: 0;
+      padding: 4px 0 12px;
+    }
+    .stepper .steps-details:not([open]) > summary {
+      padding-bottom: 4px;
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .stepper .steps-details > summary .steps-chevron {
+      display: inline;
+    }
+    .stepper .steps-details[open] > summary .steps-chevron {
+      transform: rotate(180deg);
+    }
+    .stepper-actions { margin-top: 14px; padding-top: 12px; }
+
+    .chat-header { padding: 12px 16px; }
+    .chat-title { font-size: 16px; }
+    .chat-messages { padding: 16px; max-height: 50vh; }
+    .chat-input { padding: 14px 16px; }
+    .msg-body { padding: 12px 14px; font-size: 14px; }
+
+    /* Stack chat input vertically; send button full-width */
+    .input-row { flex-direction: column; align-items: stretch; gap: 8px; }
+    .input-row .btn { width: 100%; padding: 12px 16px; }
+
+    /* iOS auto-zooms on inputs < 16px — bump to 16px on phones */
+    textarea.user-input { font-size: 16px; padding: 12px 14px; }
+    .modal-field input { font-size: 16px; padding: 12px 14px; }
+
+    /* Bigger touch targets for small buttons on phones */
+    .btn.small { padding: 10px 14px; font-size: 12.5px; }
+
+    /* Modal padding shrinks on phones */
+    .modal { padding: 24px 20px 22px; border-top-width: 3px; }
+    .modal h2 { font-size: 24px; }
+    .modal-intro { font-size: 14px; }
+    .modal-actions { gap: 8px; }
+    .modal-actions .btn { flex: 1; }
+
+    /* Summary panel */
+    .summary-panel { padding: 20px 16px; }
+    .summary-header { flex-direction: column; align-items: stretch; }
+    .summary-header h2 { font-size: 24px; }
+    .pathway-wrap { padding: 16px; }
+    .pathway-wrap h3 { font-size: 18px; }
+
+    /* Scroll hint for the pathway diagram */
+    .pathway-wrap::before {
+      content: '◂ scroll to see the full diagram ▸';
+      display: block;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-faint);
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--rule-soft);
+    }
+
+    footer { font-size: 10px; }
+  }
 
   /* ===== STEPPER ===== */
   .stepper {
@@ -156,16 +233,39 @@
     max-height: calc(100vh - 48px);
     overflow-y: auto;
   }
-  .stepper h3 {
+  .stepper .steps-details {
+    margin-bottom: 0;
+  }
+  .stepper .steps-details > summary {
+    list-style: none;
+    cursor: default;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 16px;
     color: var(--ink-faint);
     font-weight: 600;
     padding-bottom: 12px;
+    margin-bottom: 14px;
     border-bottom: 1px solid var(--rule-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+  }
+  .stepper .steps-details > summary::-webkit-details-marker { display: none; }
+  .stepper .steps-details > summary .steps-progress {
+    margin-left: auto;
+    color: var(--primary);
+    background: var(--surface);
+    padding: 2px 8px;
+    border-radius: 0;
+  }
+  .stepper .steps-details > summary .steps-chevron {
+    display: none;   /* hidden on desktop — list is always open */
+    transition: transform 0.18s ease;
+    font-size: 12px;
+    color: var(--ink-soft);
   }
   .step-item {
     display: flex;
@@ -843,8 +943,14 @@
 
   <div class="grid">
     <aside class="stepper" id="stepper">
-      <h3>The 8 Steps</h3>
-      <div id="step-list"></div>
+      <details class="steps-details" id="steps-details" open>
+        <summary>
+          <span class="steps-title">The 8 Steps</span>
+          <span class="steps-progress" id="steps-progress">0 / 8</span>
+          <span class="steps-chevron" aria-hidden="true">▾</span>
+        </summary>
+        <div id="step-list"></div>
+      </details>
       <div class="stepper-actions">
         <button class="btn ghost small" id="btn-summary">View Summary</button>
         <button class="btn ghost small" id="btn-reset">Reset All</button>
@@ -995,6 +1101,11 @@ function renderStepper() {
   });
   document.getElementById('chat-tag').textContent = `Step ${state.current+1} / ${STEPS.length}`;
   document.getElementById('chat-title').textContent = STEPS[state.current].title;
+  const progressEl = document.getElementById('steps-progress');
+  if (progressEl) {
+    const done = Object.keys(state.answers).length;
+    progressEl.textContent = `${done} / ${STEPS.length}`;
+  }
 }
 
 function addBotMessage(html, hint, example, stepKey) {
@@ -1379,7 +1490,21 @@ function init() {
   }
   presentStep(state.current);
   renderChat();
+  // On phones, start with the step list collapsed so the chat is immediately visible.
+  if (window.innerWidth <= 600) {
+    const det = document.getElementById('steps-details');
+    if (det) det.removeAttribute('open');
+  }
 }
+
+// On mobile, auto-collapse the step list when the user picks a step,
+// so they're scrolled straight into the chat.
+document.getElementById('step-list').addEventListener('click', () => {
+  if (window.innerWidth <= 600) {
+    const det = document.getElementById('steps-details');
+    if (det) det.removeAttribute('open');
+  }
+});
 </script>
 </body>
 </html>
